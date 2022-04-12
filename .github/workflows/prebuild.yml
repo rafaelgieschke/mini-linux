@@ -11,4 +11,9 @@ jobs:
        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
        git config --global user.name "github-actions[bot]"
     - run: do_push=1 ./prebuild
-
+    - uses: softprops/action-gh-release@v1
+       with:
+        files: image.iso
+        tag_name: ${{github.ref_name}}-nightly
+        prerelease: true
+        target_commitish: ${{github.sha}}
