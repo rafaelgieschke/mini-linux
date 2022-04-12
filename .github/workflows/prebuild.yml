@@ -10,7 +10,8 @@ jobs:
     - run: |
        git config --global user.email "github-actions[bot]@users.noreply.github.com"
        git config --global user.name "github-actions[bot]"
-    - run: do_push=1 ./prebuild
+    #- run: do_push=1 ./prebuild
+    - run: ./build
     - uses: softprops/action-gh-release@v1
       with:
         files: image.iso
