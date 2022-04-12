@@ -1,4 +1,4 @@
-FROM ubuntu AS kernel
+FROM ubuntu:22.04 AS kernel
 
 ARG kernel="linux-image-generic"
 WORKDIR /kernel
