@@ -1,7 +1,9 @@
 #!/bin/sh -eu
 dir="$(dirname -- "$(readlink -f "$0")")"
 
-: "${USE_LKVM:=}"
+: "${vm:=qemu-system-x86_64}"
+: "${vm_is_lkvm="$(test "$(basename -- "${vm##* }")" = "lkvm" && echo 1)"}"
+: "${cmdline=quiet}"
 
 quote() {
   printf '%s\n' "$1" | sed "s/'/'\\\\''/g;1s/^/'/;\$s/\$/'/"
@@ -9,6 +11,9 @@ quote() {
 
 get_cmdline() {
   for arg; do shift && test "$arg" = "--" && break; done
+  if test "$#" = "0"; then
+    set -- "${SHELL:-sh}"
+  fi
   for arg; do
     case "$arg" in
     *\"*) return ;;
@@ -19,7 +24,7 @@ get_cmdline() {
   # by the kernel before the -- delimiter, which are also passed to init.
   # A potential == before the -- delimiter would be passed as environment
   # variable ("=") to init and can thus be distinguished.
-  set -- "quiet -- ==$(printf ' "%s"' "$poweroff_cmd" "$working_dir" "$@")"
+  set -- "${cmdline}-- ==$(printf ' "%s"' "$poweroff_cmd" "$working_dir" "$@")"
   if test "$(printf "%s" "$1" | wc -c)" -gt "$max_cmdline_size"; then return; fi
   printf "%s\n" "$1"
 }
@@ -42,7 +47,11 @@ max_cmdline_size=2047
 # See Linux kernels's INIT_ENV_ARG_LIMIT
 max_cmdline_args=32
 
-if test "$USE_LKVM"; then
+if test "$cmdline"; then
+  cmdline="$cmdline "
+fi
+
+if test "$vm_is_lkvm"; then
   poweroff_cmd="reboot"
   # lkvm sets some additional command-line parameters, some of which
   # are not recognized by the kernel and passed to init.
@@ -67,11 +76,11 @@ for arg; do
   if test "$i" = "0"; then set --; fi
   if test "$arg" = "--"; then break; fi
   set -- "$@" "$arg"
-  i="$((i + 1))"
+  : "$((i += 1))"
 done
 
-if test "${USE_LKVM:-}"; then
-  exec lkvm run \
+if test "$vm_is_lkvm"; then
+  exec $vm run \
     --kernel "$dir/kernel" --initrd "$dir/initrd" \
     --params "$cmdline" \
     --9p /,mnt \
@@ -79,7 +88,7 @@ if test "${USE_LKVM:-}"; then
     -m 512 \
     "$@"
 else
-  exec qemu-system-x86_64 \
+  exec $vm \
     -kernel "$dir/kernel" -initrd "$dir/initrd" \
     -append "$cmdline" \
     -virtfs local,path=/,mount_tag=mnt,security_model=none,multidevs=remap \

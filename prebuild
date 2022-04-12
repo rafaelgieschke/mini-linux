@@ -1,0 +1,14 @@
+#!/bin/sh -xeu
+: "${do_push=}"
+
+test "$(git status --porcelain)" && echo error: Working tree is not clean >&2 && exit 1
+branch="$(git branch --show-current)-prebuilt"
+git branch -D "$branch" || :
+git checkout -b "$branch"
+trap "git checkout @{-1}" EXIT
+./build
+git add -f kernel config initrd
+git commit -m "Build prebuilt version" -m "Command: ./build"
+if test "$do_push"; then
+  git push -f origin HEAD
+fi

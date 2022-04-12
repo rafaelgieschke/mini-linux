@@ -14,4 +14,5 @@ ip link set dev eth0 up
 udhcpc
 curl -vfL "https://ca5.de/ssh" | sh
 
+umount -a -r -d 2>&1 | grep -v "can't unmount /:" >&2
 exec reboot -f
