@@ -34,13 +34,14 @@ FROM alpine as initrd
 RUN ln -s /bin /sbin
 COPY --from=kernel /modules .
 RUN depmod "$(basename -- /lib/modules/*/)"
-COPY init /init
 
 WORKDIR /
 RUN apk add curl openssh-server screen
 # ADD https://github.com/opencontainers/runc/releases/latest/download/runc.amd64 runc
 # RUN chmod a+x runc
 RUN apk add runc
+
+COPY init /init
 
 FROM ubuntu as image
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y cpio grub2 grub-efi-amd64-bin xorriso mtools

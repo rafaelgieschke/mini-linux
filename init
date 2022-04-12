@@ -12,7 +12,7 @@ mount -t devpts devpts /dev/pts
 
 ip link set dev eth0 up &
 udhcpc &
-sh
+sh < /dev/console
 
 umount -a -r -d 2>&1 | grep -v "can't unmount /:" >&2
-exec reboot -f
+exec poweroff -f
