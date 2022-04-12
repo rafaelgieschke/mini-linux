@@ -7,7 +7,7 @@ git branch -D "$branch" || :
 git checkout -b "$branch"
 trap "git checkout @{-1}" EXIT
 ./build
-git add -f kernel config initrd
+git add -f kernel config initrd image.iso
 git commit -m "Build prebuilt version" -m "Command: ./build"
 if test "$do_push"; then
   git push -f origin HEAD
