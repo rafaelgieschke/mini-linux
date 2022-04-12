@@ -1,4 +1,0 @@
-#!/bin/sh
-me="$(realpath -- "$0")"
-
-exec "${me%-kvm}" -enable-kvm -cpu host "$@"
