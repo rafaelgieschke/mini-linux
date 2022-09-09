@@ -15,8 +15,8 @@ ln -s /boot/efi /storage
 
 ip link set dev eth0 up &
 udhcpc &
-sh < /dev/console 2>&1
 for i in $(seq 5); do openvt sh; done
+sh < /dev/console 2>&1
 
 umount -a -r -d 2>&1 | grep -v "can't unmount /:" >&2
 exec poweroff -f
