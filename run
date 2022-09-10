@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 # exec qemu-system-x86_64 -display none -vga none -serial stdio \
 exec qemu-system-x86_64 \
@@ -8,3 +8,4 @@ exec qemu-system-x86_64 \
   -device virtio-rng-pci \
   -device ne2k_pci,netdev=net0 \
   -netdev user,id=net0,hostfwd=tcp::2222-:22 \
+  "$@"
