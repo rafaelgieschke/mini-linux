@@ -16,6 +16,29 @@ ln -s /boot/efi /storage
 ip link set dev eth0 up &
 udhcpc &
 for i in $(seq 5); do openvt sh; done
+
+# qemu-system-x86_64 -smbios type=11,values=eval:...
+oem_strings=""
+if test -e /sys/firmware/dmi/entries/11-0/raw; then
+  oem_strings="$(tail -c+6 /sys/firmware/dmi/entries/11-0/raw | tr '\0' '\n')"
+fi
+
+item() {
+  printf %s "$1" | grep "^$2:" | tail "-c+$((${#2} + 2))"
+}
+
+eval="$(item "$oem_strings" eval)"
+if test "$eval"; then
+  eval "$eval"
+fi
+
+loop="$(item "$oem_strings" loop)"
+if test "$loop"; then
+  while true; do
+    eval "$loop"
+  done
+fi
+
 setsid -c sh
 
 umount -a -r -d 2>&1 | grep -v "can't unmount /:" >&2
