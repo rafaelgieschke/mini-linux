@@ -19,8 +19,12 @@ for i in $(seq 5); do openvt sh; done
 
 # qemu-system-x86_64 -smbios type=11,values=eval:...
 oem_strings=""
-if test -e /sys/firmware/dmi/entries/11-0/raw; then
-  oem_strings="$(tail -c+6 /sys/firmware/dmi/entries/11-0/raw | tr '\0' '\n')"
+if test -e /sys/firmware/dmi/entries; then
+  if test -e /sys/firmware/dmi/entries/11-0/raw; then
+    oem_strings="$(tail -c+6 /sys/firmware/dmi/entries/11-0/raw | tr '\0' '\n')"
+  fi
+elif test -e /sys/firmware/dmi/tables/DMI; then
+  oem_strings="$(strings /sys/firmware/dmi/tables/DMI)"
 fi
 
 item() {
