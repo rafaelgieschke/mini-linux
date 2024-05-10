@@ -13,8 +13,8 @@ mkdir -p /boot/efi
 mount /dev/sda2 /boot/efi
 ln -s /boot/efi /storage
 
-ip link set dev eth0 up &
-udhcpc &
+# ip link set dev eth0 up &
+# udhcpc &
 for i in $(seq 5); do openvt sh; done
 
 # qemu-system-x86_64 -smbios type=11,values=eval:...
