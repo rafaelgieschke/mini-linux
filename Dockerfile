@@ -82,7 +82,7 @@ RUN find . | cpio -o -H newc | gzip -c > /output/initrd
 WORKDIR /image
 RUN ln /output/* .
 RUN mkdir -p boot/grub && printf 'linux /kernel\ninitrd /initrd\nboot\n' > boot/grub/grub.cfg
-RUN grub-mkrescue -o /output/image.iso .
+RUN grub-mkrescue -o /output/image.iso . -- -hfsplus off
 RUN chmod -R +r /output
 
 ###############################################################################
