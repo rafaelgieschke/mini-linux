@@ -34,7 +34,7 @@ RUN basename -- /lib/modules/* > version \
 # see <https://github.com/torvalds/linux/blob/5e321ded302da4d8c5d5dd953423d9b748ab3775/kernel/kmod.c#L61>.
 ARG modules="iso9660"
 # $modules_load are loaded by init on start-up
-ARG modules_load="loop fuse msdos vfat ne2k-pci 8139cp e1000 virtio_rng bochs cirrus simpledrm i8042 atkbd"
+ARG modules_load="loop fuse ahci msdos vfat ne2k-pci 8139cp e1000 virtio_rng bochs cirrus simpledrm i8042 atkbd"
 WORKDIR /modules
 # See https://www.kernel.org/doc/Documentation/kbuild/kbuild.txt
 RUN cp -v --parents "/lib/modules/$(cat /kernel/version)/modules.order" .
@@ -82,7 +82,7 @@ RUN find . | cpio -o -H newc | gzip -c > /output/initrd
 WORKDIR /image
 RUN ln /output/* .
 RUN mkdir -p boot/grub && printf 'linux /kernel\ninitrd /initrd\nboot\n' > boot/grub/grub.cfg
-RUN grub-mkrescue -o /output/image.iso . -- -hfsplus off
+RUN grub-mkrescue -o /output/image.iso . -- -hfsplus off -boot_image any appended_part_as=gpt -boot_image any partition_cyl_align=all -padding 0
 RUN chmod -R +r /output
 
 ###############################################################################
