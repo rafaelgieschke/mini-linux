@@ -6,9 +6,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - run: ./build
-    - uses: softprops/action-gh-release@v1
-      with:
-        files: "*.iso"
-        tag_name: ${{github.ref_name}}-nightly
-        prerelease: true
-        target_commitish: ${{github.sha}}
+    - run: |
+        gh release create --prerelease -- "$tag" || gh api -X PATCH "/repos/{owner}/{repo}/git/refs/tags/$tag" -F force=true -f "sha=$(git rev-parse @)"
+        gh release upload --clobber -- "$tag" *.iso
+      env:
+        tag: ${{github.ref_name}}-nightly
+        GH_TOKEN: ${{github.token}}
