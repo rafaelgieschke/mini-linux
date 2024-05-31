@@ -82,7 +82,9 @@ RUN find . | cpio -o -H newc | gzip -c > /output/initrd
 WORKDIR /image
 RUN ln /output/* .
 RUN mkdir -p boot/grub && printf 'linux /kernel\ninitrd /initrd\nboot\n' > boot/grub/grub.cfg
-RUN grub-mkrescue -o /output/image.iso . -- -hfsplus off -boot_image any appended_part_as=gpt -boot_image any partition_cyl_align=all -padding 0
+# RUN truncate --size 10M /tmp/part
+# RUN mkfs.ext4 -d /output /tmp/part 50M
+RUN grub-mkrescue -o /output/image.iso . -- -hfsplus off `#--append_partition 1 0fc63daf-8483-4772-8e79-3d69d8477de4 /tmp/part` -boot_image any appended_part_as=gpt -boot_image any partition_cyl_align=all -padding 0
 RUN chmod -R +r /output
 
 ###############################################################################
