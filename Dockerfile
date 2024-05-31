@@ -48,7 +48,8 @@ RUN modprobe -aDS "$(cat /kernel/version)" $modules \
   | awk '!seen[$0]++' | sed "s/^builtin /# &/" \
   | sed "/^#/d;s/^insmod //" \
   | xargs --no-run-if-empty cp -v --parents -t .
-RUN cp -v --parents "/lib/modules/$(cat /kernel/version)/kernel/fs/nls/"*.ko . || :
+RUN cp -v --parents "/lib/modules/$(cat /kernel/version)/kernel/fs/nls/"*.ko* . || :
+RUN zstd --rm -d "lib/modules/$(cat /kernel/version)/kernel/fs/nls/"*.ko.zst || :
 
 ###############################################################################
 
