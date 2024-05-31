@@ -8,7 +8,7 @@ jobs:
     - run: ./build
     - uses: softprops/action-gh-release@v1
       with:
-        files: image.iso
+        files: *.iso
         tag_name: ${{github.ref_name}}-nightly
         prerelease: true
         target_commitish: ${{github.sha}}
