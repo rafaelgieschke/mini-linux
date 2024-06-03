@@ -1,5 +1,4 @@
-# ./build --build-arg image=ubuntu --build-arg kernel=linux-image-generic
-# ./build --build-arg image=ubuntu --build-arg kernel=linux-image-kvm
+# ./build --build-arg image=ubuntu --build-arg kernel=linux-generic
 # ./build --build-arg image=fedora --build-arg kernel=kernel
 # ./build --build-arg image=archlinux --build-arg kernel=linux
 
@@ -9,8 +8,9 @@ ARG image="ubuntu"
 
 FROM "$image" as kernel
 
-ARG kernel="linux-image-generic"
-# ARG kernel="linux-image-kvm"
+# In Ubuntu, linux-generic installs linux-image-generic and linux-headers-generic
+# and provides exactly the same kernel as linux-kvm/linux-virtual.
+ARG kernel="linux-generic"
 # ARG kernel="kernel"
 # ARG kernel="linux"
 
